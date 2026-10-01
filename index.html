@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스피치 발음 카드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap">
+<style>
+/* Layout: Google식 검색바 상단 → 메인(발음 카드 + 단어별 표) / 사이드(예시·최근·읽는 법) 2단, 좁으면 1단 */
+:root{
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f5f7fa; --line:#e0e4ea; --fg:#1f2328; --muted:#5f6772;
+  --accent:#1a73e8; --accent-strong:#1558b0; --accent-soft:#e8f0fe; --hl:#fff1b8;
+  --ok:#137333; --ok-soft:#e6f4ea; --warn:#9a5b00; --warn-soft:#fef3e0; --bad:#c5221f; --bad-soft:#fce8e6; --rec:#d93025; --rec-soft:rgba(217,48,37,.25);
+  --skin:#f3d6c3; --lip:#d45f6c; --lip-dark:#a8424f; --mouth:#3b1c24; --teeth:#ffffff; --tongue:#ec8f99;
+  --shadow:0 1px 2px rgba(32,40,52,.08),0 2px 10px rgba(32,40,52,.06);
+  --f-ui:"Roboto","Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --f-kr:"Noto Sans KR","Roboto",system-ui,"Apple SD Gothic Neo",sans-serif;
+  --f-ipa:"Noto Sans","Roboto","Segoe UI","Lucida Grande",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101318; --surface:#1a1e24; --surface-2:#222831; --line:#2f3640; --fg:#e6e9ed; --muted:#9aa4b0;
+  --accent:#8ab4f8; --accent-strong:#aecbfa; --accent-soft:#1d2a40; --hl:#4a3f12;
+  --ok:#81c995; --ok-soft:#18301f; --warn:#fdd087; --warn-soft:#3a2d12; --bad:#f28b82; --bad-soft:#3c1e1c; --rec:#e8453c; --rec-soft:rgba(232,69,60,.3);
+  --skin:#d8b49d; --lip:#c95966; --lip-dark:#8e3642; --mouth:#2a1117; --teeth:#f4f4f4; --tongue:#e0808b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 2px 10px rgba(0,0,0,.3); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#101318; --surface:#1a1e24; --surface-2:#222831; --line:#2f3640; --fg:#e6e9ed; --muted:#9aa4b0;
+  --accent:#8ab4f8; --accent-strong:#aecbfa; --accent-soft:#1d2a40; --hl:#4a3f12;
+  --ok:#81c995; --ok-soft:#18301f; --warn:#fdd087; --warn-soft:#3a2d12; --bad:#f28b82; --bad-soft:#3c1e1c; --rec:#e8453c; --rec-soft:rgba(232,69,60,.3);
+  --skin:#d8b49d; --lip:#c95966; --lip-dark:#8e3642; --mouth:#2a1117; --teeth:#f4f4f4; --tongue:#e0808b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 2px 10px rgba(0,0,0,.3); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- 상단 바 ---------- */
+.top{background:var(--surface);border-bottom:1px solid var(--line);padding:12px 16px}
+.top-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-kr);font-weight:700;font-size:17px;white-space:nowrap}
+.logo{width:32px;height:32px;border-radius:9px;background:var(--accent);color:var(--surface);display:grid;place-items:center;font-family:var(--f-ui);font-size:15px;letter-spacing:-.5px}
+.search{flex:1 1 420px;min-width:0;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:4px 6px 4px 16px;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s}
+.search:focus-within{border-color:var(--accent);box-shadow:0 1px 6px rgba(26,115,232,.25)}
+.search svg{flex:none;width:20px;height:20px;fill:var(--muted)}
+.search input{flex:1;min-width:0;border:0;background:transparent;outline:none;padding:8px 0;font-size:16px}
+.icon-btn{border:0;background:transparent;width:34px;height:34px;border-radius:50%;cursor:pointer;display:grid;place-items:center;color:var(--muted);font-size:20px}
+.icon-btn:hover{background:var(--surface-2)}
+.go{border:0;background:var(--accent);color:var(--surface);font-weight:500;border-radius:20px;padding:8px 18px;cursor:pointer;font-family:var(--f-kr);font-size:14px}
+.go:hover{background:var(--accent-strong)}
+
+/* ---------- 본문 ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding-block:20px 40px;padding-inline:16px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.col-main,.col-side{display:grid;gap:20px;min-width:0}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- 발음 카드 ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:20px 24px 22px}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.card-title{font-family:var(--f-kr);font-weight:500;font-size:14px;color:var(--muted);letter-spacing:.02em}
+.src{font-family:var(--f-kr);font-size:12.5px;color:var(--muted)}
+.card-body{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:start}
+@media (max-width:640px){.card-body{grid-template-columns:minmax(0,1fr)}.card{padding:18px 16px}}
+.left{min-width:0;display:grid;gap:10px}
+.query{font-size:18px;color:var(--muted);overflow-wrap:anywhere}
+.resp{font-weight:400;line-height:1.25;overflow-wrap:anywhere;letter-spacing:.005em}
+.resp b{font-weight:700}
+.resp.lg{font-size:clamp(34px,6vw,48px)}
+.resp.md{font-size:clamp(24px,4vw,32px)}
+.resp.sm{font-size:clamp(20px,3.2vw,25px)}
+.resp .dot{color:var(--muted);font-weight:400;padding:0 .04em}
+.ipa{font-family:var(--f-ipa);font-size:17px;color:var(--muted);overflow-wrap:anywhere}
+.w{border-radius:6px;cursor:pointer;transition:background .12s;padding:0 1px}
+.w:hover{background:var(--surface-2)}
+.w.focus{box-shadow:inset 0 -2px 0 var(--accent)}
+.w.speaking{background:var(--hl)}
+.controls{display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap;margin-top:6px}
+.speak{width:52px;height:52px;border-radius:50%;border:0;cursor:pointer;background:var(--accent-soft);display:grid;place-items:center;position:relative;transition:background .15s,transform .1s}
+.speak svg{width:26px;height:26px;fill:var(--accent)}
+.speak:hover{filter:brightness(.97)}
+.speak:active{transform:scale(.95)}
+.speak.on{background:var(--accent)}
+.speak.on svg{fill:var(--surface)}
+.speak.on::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--accent);opacity:.5;animation:ring 1.1s ease-out infinite}
+@keyframes ring{from{transform:scale(.9);opacity:.6}to{transform:scale(1.2);opacity:0}}
+.speak:disabled{opacity:.4;cursor:not-allowed}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--f-kr);font-size:14px;user-select:none}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.track{width:36px;height:20px;border-radius:10px;background:var(--line);position:relative;transition:background .15s;flex:none}
+.thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .15s}
+.switch input:checked + .track{background:var(--accent)}
+.switch input:checked + .track .thumb{transform:translateX(16px)}
+.switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:2px}
+.sel{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E") no-repeat right 12px center;border-radius:20px;padding:7px 32px 7px 14px;font-family:var(--f-kr);font-size:14px;cursor:pointer}
+.voice{font-family:var(--f-kr);font-size:12.5px;color:var(--muted)}
+
+/* 입 모양 */
+.right{display:grid;gap:10px;justify-items:center;min-width:0}
+.mouth-box{width:100%;max-width:240px;background:var(--surface-2);border-radius:16px;padding:10px;border:1px solid var(--line)}
+.mouth-box svg{display:block;width:100%;height:auto}
+.m-skin{fill:var(--skin)} .m-lip{fill:var(--lip)} .m-inner{fill:var(--mouth)} .m-teeth{fill:var(--teeth)} .m-tongue{fill:var(--tongue)}
+.m-line{stroke:var(--lip-dark);fill:none;stroke-width:3;stroke-linecap:round}
+.m-shine{fill:#ffffff}
+.cap{width:100%;max-width:240px;font-family:var(--f-kr);font-size:13px;text-align:center;min-height:3.2em}
+.cap strong{font-family:var(--f-ipa);font-size:15px;margin-right:4px}
+.cap p{margin:2px 0 0;color:var(--muted)}
+.chips-label{font-family:var(--f-kr);font-size:12px;color:var(--muted);width:100%;max-width:240px;display:flex;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:240px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:4px 8px;min-width:38px;cursor:pointer;display:grid;justify-items:center;line-height:1.2}
+.chip .sym{font-family:var(--f-ipa);font-size:17px}
+.chip .rs{font-size:11px;color:var(--muted)}
+.chip:hover{border-color:var(--accent)}
+.chip.on{border-color:var(--accent);background:var(--accent-soft)}
+
+/* ---------- 패널 / 표 ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.panel h2{margin:0;font-family:var(--f-kr);font-size:15px;font-weight:700}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.panel-head .sub{font-family:var(--f-kr);font-size:12.5px;color:var(--muted);font-weight:400;margin-left:6px}
+.table-wrap{overflow-x:auto;margin:0 -6px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{font-family:var(--f-kr);font-weight:500;font-size:12px;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .12s}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr.focus{background:var(--accent-soft)}
+tbody tr.speaking td{background:var(--hl)}
+tbody tr:last-child td{border-bottom:0}
+.num{color:var(--muted);font-variant-numeric:tabular-nums;width:28px}
+.q-word{font-weight:500}
+.t-resp b{font-weight:700}
+.t-resp .dot{color:var(--muted)}
+.t-ipa{font-family:var(--f-ipa);color:var(--muted);white-space:nowrap}
+.pill{font-family:var(--f-kr);font-size:11.5px;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pill.dict{background:var(--ok-soft);color:var(--ok)}
+.pill.derived{background:var(--ok-soft);color:var(--ok)}
+.pill.online{background:var(--accent-soft);color:var(--accent)}
+.pill.rules{background:var(--warn-soft);color:var(--warn)}
+.mini{border:0;background:transparent;width:32px;height:32px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.mini svg{width:19px;height:19px;fill:var(--accent)}
+.mini:hover{background:var(--accent-soft)}
+.empty{color:var(--muted);font-family:var(--f-kr);text-align:center;padding:18px 0}
+body.memo .q-word,body.memo .query{filter:blur(6px);transition:filter .15s}
+body.memo tr:hover .q-word,body.memo .query:hover{filter:none}
+
+/* 사이드 */
+.list{display:grid;gap:6px;margin-top:10px}
+.item{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;text-align:left;cursor:pointer;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.item:hover{border-color:var(--accent);background:var(--accent-soft)}
+.list .none{font-family:var(--f-kr);font-size:13px;color:var(--muted)}
+.legend dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:10px 0 0;font-size:13.5px}
+.legend dt{font-weight:500;white-space:nowrap}
+.legend dd{margin:0;font-family:var(--f-kr);color:var(--muted)}
+.legend p{font-family:var(--f-kr);font-size:12.5px;color:var(--muted);margin:12px 0 0}
+.speak.busy svg{opacity:.35}
+.speak.busy::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.engine{display:inline-block;font-size:11.5px;border-radius:10px;padding:1px 8px;margin-right:6px;background:var(--surface-2);border:1px solid var(--line)}
+.engine.hq{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+
+/* 발음 점수 */
+.score-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.rec{border:0;border-radius:24px;padding:10px 20px 10px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:var(--rec);color:#ffffff;font-family:var(--f-kr);font-weight:500;font-size:14px}
+.rec svg{width:20px;height:20px;fill:currentColor}
+.rec:hover{filter:brightness(1.06)}
+.rec.on{animation:recpulse 1.2s ease-in-out infinite}
+@keyframes recpulse{50%{box-shadow:0 0 0 6px var(--rec-soft)}}
+.rec:disabled{opacity:.45;cursor:not-allowed;animation:none}
+.rec-status{font-family:var(--f-kr);font-size:13px;color:var(--muted);min-width:0;flex:1 1 200px}
+.result{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px 24px;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+@media (max-width:560px){.result{grid-template-columns:minmax(0,1fr)}}
+.ring{width:108px;height:108px;position:relative;justify-self:center}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bg{stroke:var(--line)} .ring .fg{transition:stroke-dashoffset .6s ease}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1.1}
+.ring .val b{font-size:30px;font-variant-numeric:tabular-nums}
+.ring .val span{display:block;font-family:var(--f-kr);font-size:11px;color:var(--muted)}
+.bars{display:grid;gap:8px;min-width:0}
+.bar{display:grid;grid-template-columns:52px minmax(0,1fr) 34px;gap:10px;align-items:center;font-family:var(--f-kr);font-size:13px}
+.bar .tr{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:4px;transition:width .6s ease}
+.bar .n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-ui)}
+.swords{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.sw{border-radius:8px;padding:3px 9px;font-size:15px;cursor:pointer;border:1px solid transparent;display:inline-grid;line-height:1.25;justify-items:center}
+.sw small{font-size:10.5px;font-variant-numeric:tabular-nums;opacity:.85}
+.sw.good{background:var(--ok-soft);color:var(--ok)}
+.sw.fair{background:var(--warn-soft);color:var(--warn)}
+.sw.poor,.sw.wrong{background:var(--bad-soft);color:var(--bad)}
+.sw.missed{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.heard{grid-column:1/-1;font-family:var(--f-kr);font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.heard b{font-family:var(--f-ui);color:var(--fg);font-weight:500}
+.t-score{font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.t-score.good{color:var(--ok)} .t-score.fair{color:var(--warn)} .t-score.poor,.t-score.wrong,.t-score.missed{color:var(--bad)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="logo">Aa</span>스피치 발음 카드</div>
+    <form class="search" id="searchForm" autocomplete="off">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input id="q" type="text" spellcheck="false" placeholder="영어 단어나 스피치 문장을 입력하세요" aria-label="영어 단어 또는 문장">
+      <button type="button" class="icon-btn" id="clearBtn" aria-label="입력 지우기">×</button>
+      <button type="submit" class="go">발음 듣기</button>
+    </form>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="col-main">
+    <article class="card" aria-live="polite">
+      <div class="card-head">
+        <span class="card-title">발음</span>
+        <span class="src" id="src"></span>
+      </div>
+      <div class="card-body">
+        <div class="left">
+          <div class="query" id="queryText"></div>
+          <div class="resp lg" id="resp"></div>
+          <div class="ipa" id="ipa"></div>
+          <div class="controls">
+            <button class="speak" id="speakBtn" aria-label="발음 듣기" title="발음 듣기">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </button>
+            <label class="switch"><input type="checkbox" id="slow"><span class="track"><span class="thumb"></span></span>느림 (0.5배)</label>
+            <select class="sel" id="accent" aria-label="발음 선택">
+              <option value="en-US">미국식 (en-US)</option>
+              <option value="en-GB">영국식 (en-GB)</option>
+            </select>
+          </div>
+          <div class="voice" id="voiceInfo"></div>
+        </div>
+        <div class="right">
+          <div class="mouth-box">
+            <svg viewBox="0 0 200 156" role="img" aria-label="입 모양 그림">
+              <defs><clipPath id="mclip"><ellipse id="clipE" cx="100" cy="78" rx="0" ry="0"/></clipPath></defs>
+              <circle class="m-skin" cx="100" cy="78" r="74"/>
+              <ellipse class="m-lip" id="lipO" cx="100" cy="78" rx="40" ry="9"/>
+              <ellipse class="m-inner" id="inner" cx="100" cy="78" rx="0" ry="0"/>
+              <g clip-path="url(#mclip)">
+                <ellipse class="m-tongue" id="tongue" cx="100" cy="90" rx="0" ry="0"/>
+                <rect class="m-teeth" id="teethT" x="100" y="70" width="0" height="8" rx="2"/>
+                <rect class="m-teeth" id="teethB" x="100" y="84" width="0" height="7" rx="2"/>
+              </g>
+              <ellipse class="m-tongue" id="tout" cx="100" cy="80" rx="0" ry="0"/>
+              <path class="m-line" id="lipLine" d="M66 78 Q100 81 134 78"/>
+              <rect class="m-teeth" id="bite" x="80" y="80" width="40" height="7" rx="2" opacity="0"/>
+              <ellipse class="m-shine" id="shine" cx="100" cy="84" rx="14" ry="2" opacity=".22"/>
+            </svg>
+          </div>
+          <div class="cap"><strong id="capSym"></strong><span id="capName">입 모양</span><p id="capTip">아래 발음 기호를 누르면 입 모양이 바뀌어요.</p></div>
+          <div class="chips-label"><span id="chipWord"></span><span>소리 단위</span></div>
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
+    </article>
+
+    <section class="panel" id="scorePanel">
+      <div class="panel-head">
+        <h2>발음 점수<span class="sub">문장을 소리 내 읽고 녹음하면 단어별로 채점해요</span></h2>
+      </div>
+      <div class="score-top">
+        <button class="rec" id="recBtn" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+          <span id="recLabel">녹음 시작</span>
+        </button>
+        <div class="rec-status" id="recStatus">서버 연결을 확인하는 중…</div>
+      </div>
+      <div class="result" id="result" hidden></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>단어별 발음<span class="sub" id="wordCount"></span></h2>
+        <label class="switch"><input type="checkbox" id="memo"><span class="track"><span class="thumb"></span></span>암기 모드 (원문 가리기)</label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>단어</th><th>쉬운 읽기</th><th>발음 기호</th><th>출처</th><th>점수</th><th><span class="sr" hidden>듣기</span></th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <aside class="col-side">
+    <section class="panel">
+      <h2>예시 스피치 문장</h2>
+      <div class="list" id="samples"></div>
+    </section>
+    <section class="panel">
+      <h2>최근 검색</h2>
+      <div class="list" id="recent"></div>
+    </section>
+    <section class="panel legend">
+      <h2>쉬운 읽기 보는 법</h2>
+      <dl>
+        <dt><b>굵게</b></dt><dd>강세를 주는 음절</dd>
+        <dt>·</dt><dd>음절 구분</dd>
+        <dt>aa</dt><dd>입을 크게 벌린 '아'</dd>
+        <dt>uh</dt><dd>힘을 뺀 짧은 '어'</dd>
+        <dt>ur</dt><dd>혀를 말아 올린 '어r'</dd>
+        <dt>ee / oo</dt><dd>길게 '이' / 길게 '우'</dd>
+        <dt>dh</dt><dd>성대를 울리는 th (the)</dd>
+        <dt>zh</dt><dd>성대를 울리는 sh (vision)</dd>
+      </dl>
+      <p>쉬운 읽기·발음 기호는 내장 사전(약 300단어)과 영어 철자 규칙으로 계산해요. 출처가 '추정'인 단어는 틀릴 수 있으니 음성으로 한 번 더 확인하세요.</p>
+    </section>
+  </aside>
+</main>
+
+<script>
+/* =========================================================
+   1. 내장 발음 사전 (CMU 표기: 모음 뒤 숫자 = 강세 1 주강세, 2 부강세, 0 약세)
+   ========================================================= */
+const DICT_SRC = `the DH AH0
+a AH0
+an AE1 N
+of AH1 V
+to T UW1
+and AH0 N D
+you Y UW1
+i AY1
+is IH1 Z
+was W AA1 Z
+are AA1 R
+were W ER1
+have HH AE1 V
+has HH AE1 Z
+had HH AE1 D
+do D UW1
+does D AH1 Z
+did D IH1 D
+done D AH1 N
+said S EH1 D
+say S EY1
+one W AH1 N
+once W AH1 N S
+two T UW1
+three TH R IY1
+who HH UW1
+what W AH1 T
+where W EH1 R
+when W EH1 N
+why W AY1
+how HH AW1
+now N AW1
+there DH EH1 R
+their DH EH1 R
+they DH EY1
+we W IY1
+be B IY1
+been B IH1 N
+being B IY1 IH0 NG
+from F R AH1 M
+for F AO1 R
+with W IH1 DH
+this DH IH1 S
+that DH AE1 T
+these DH IY1 Z
+those DH OW1 Z
+our AW1 ER0
+your Y AO1 R
+would W UH1 D
+could K UH1 D
+should SH UH1 D
+people P IY1 P AH0 L
+because B IH0 K AO1 Z
+thank TH AE1 NG K
+thanks TH AE1 NG K S
+ladies L EY1 D IY0 Z
+gentlemen JH EH1 N T AH0 L M IH0 N
+today T AH0 D EY1
+tomorrow T AH0 M AA1 R OW2
+world W ER1 L D
+future F Y UW1 CH ER0
+together T AH0 G EH1 DH ER0
+believe B IH0 L IY1 V
+dream D R IY1 M
+launch L AO1 N CH
+launched L AO1 N CH T
+speech S P IY1 CH
+speak S P IY1 K
+pronunciation P R AH0 N AH2 N S IY0 EY1 SH AH0 N
+pronounce P R AH0 N AW1 N S
+english IH1 NG G L IH0 SH
+education EH2 JH AH0 K EY1 SH AH0 N
+school S K UW1 L
+student S T UW1 D AH0 N T
+students S T UW1 D AH0 N T S
+change CH EY1 N JH
+important IH2 M P AO1 R T AH0 N T
+opportunity AA2 P ER0 T UW1 N AH0 T IY0
+technology T EH0 K N AA1 L AH0 JH IY0
+community K AH0 M Y UW1 N AH0 T IY0
+everyone EH1 V R IY0 W AH2 N
+everything EH1 V R IY0 TH IH2 NG
+every EH1 V R IY0
+very V EH1 R IY0
+many M EH1 N IY0
+any EH1 N IY0
+again AH0 G EH1 N
+against AH0 G EH1 N S T
+through TH R UW1
+though DH OW1
+although AO2 L DH OW1
+thought TH AO1 T
+enough IH0 N AH1 F
+laugh L AE1 F
+know N OW1
+known N OW1 N
+knowledge N AA1 L IH0 JH
+women W IH1 M AH0 N
+woman W UH1 M AH0 N
+busy B IH1 Z IY0
+business B IH1 Z N AH0 S
+colleague K AA1 L IY0 G
+choose CH UW1 Z
+journey JH ER1 N IY0
+success S AH0 K S EH1 S
+successful S AH0 K S EH1 S F AH0 L
+challenge CH AE1 L AH0 N JH
+achieve AH0 CH IY1 V
+experience IH0 K S P IH1 R IY0 AH0 N S
+different D IH1 F ER0 AH0 N T
+idea AY0 D IY1 AH0
+ideas AY0 D IY1 AH0 Z
+question K W EH1 S CH AH0 N
+answer AE1 N S ER0
+water W AO1 T ER0
+better B EH1 T ER0
+little L IH1 T AH0 L
+hello HH AH0 L OW1
+good G UH1 D
+morning M AO1 R N IH0 NG
+afternoon AE2 F T ER0 N UW1 N
+evening IY1 V N IH0 NG
+name N EY1 M
+want W AA1 N T
+like L AY1 K
+love L AH1 V
+learn L ER1 N
+work W ER1 K
+word W ER1 D
+first F ER1 S T
+great G R EY1 T
+give G IH1 V
+live L IH1 V
+make M EY1 K
+come K AH1 M
+some S AH1 M
+only OW1 N L IY0
+other AH1 DH ER0
+another AH0 N AH1 DH ER0
+mother M AH1 DH ER0
+father F AA1 DH ER0
+brother B R AH1 DH ER0
+new N UW1
+year Y IH1 R
+years Y IH1 R Z
+time T AY1 M
+life L AY1 F
+me M IY1
+my M AY1
+he HH IY1
+she SH IY1
+his HH IH1 Z
+her HH ER1
+him HH IH1 M
+them DH EH1 M
+us AH1 S
+no N OW1
+go G OW1
+out AW1 T
+about AH0 B AW1 T
+into IH1 N T UW0
+more M AO1 R
+before B IH0 F AO1 R
+after AE1 F T ER0
+never N EH1 V ER0
+always AO1 L W EY2 Z
+think TH IH1 NG K
+thing TH IH1 NG
+day D EY1
+way W EY1
+also AO1 L S OW0
+here HH IH1 R
+help HH EH1 L P
+friend F R EH1 N D
+family F AE1 M AH0 L IY0
+country K AH1 N T R IY0
+heart HH AA1 R T
+hope HH OW1 P
+put P UH1 T
+full F UH1 L
+eye AY1
+own OW1 N
+sure SH UH1 R
+move M UW1 V
+lose L UW1 Z
+blood B L AH1 D
+honest AA1 N AH0 S T
+hour AW1 ER0
+island AY1 L AH0 N D
+listen L IH1 S AH0 N
+often AO1 F AH0 N
+clothes K L OW1 DH Z
+vegetable V EH1 JH T AH0 B AH0 L
+comfortable K AH1 M F T ER0 B AH0 L
+wednesday W EH1 N Z D EY2
+february F EH1 B Y AH0 W EH2 R IY0
+schedule S K EH1 JH UH0 L
+tomato T AH0 M EY1 T OW2
+ready R EH1 D IY0
+head HH EH1 D
+break B R EY1 K
+nation N EY1 SH AH0 N
+can K AE1 N
+will W IH1 L
+not N AA1 T
+but B AH1 T
+or AO1 R
+all AO1 L
+just JH AH1 S T
+get G EH1 T
+see S IY1
+look L UH1 K
+take T EY1 K
+project P R AA1 JH EH2 K T
+build B IH1 L D
+freedom F R IY1 D AH0 M
+voice V OY1 S
+power P AW1 ER0
+courage K ER1 IH0 JH
+key K IY1
+grateful G R EY1 T F AH0 L
+proud P R AW1 D
+finally F AY1 N AH0 L IY0
+audience AO1 D IY0 AH0 N S
+presentation P R EH2 Z AH0 N T EY1 SH AH0 N
+especially AH0 S P EH1 SH AH0 L IY0
+probably P R AA1 B AH0 B L IY0
+actually AE1 K CH UW0 AH0 L IY0
+interesting IH1 N T R AH0 S T IH0 NG
+beautiful B Y UW1 T AH0 F AH0 L
+month M AH1 N TH
+girl G ER1 L
+begin B IH0 G IH1 N
+give G IH1 V
+here HH IH1 R
+welcome W EH1 L K AH0 M
+everybody EH1 V R IY0 B AA2 D IY0
+dear D IH1 R
+fellow F EH1 L OW0
+honor AA1 N ER0
+leader L IY1 D ER0
+leadership L IY1 D ER0 SH IH2 P
+team T IY1 M
+goal G OW1 L
+vision V IH1 ZH AH0 N
+mission M IH1 SH AH0 N
+growth G R OW1 TH
+create K R IY0 EY1 T
+together T AH0 G EH1 DH ER0
+society S AH0 S AY1 AH0 T IY0
+government G AH1 V ER0 N M AH0 N T
+economy IH0 K AA1 N AH0 M IY0
+science S AY1 AH0 N S
+history HH IH1 S T ER0 IY0
+language L AE1 NG G W AH0 JH
+culture K AH1 L CH ER0
+environment IH0 N V AY1 R AH0 N M AH0 N T
+company K AH1 M P AH0 N IY0
+product P R AA1 D AH0 K T
+customer K AH1 S T AH0 M ER0
+develop D IH0 V EH1 L AH0 P
+determine D IH0 T ER1 M AH0 N
+entrepreneur AA2 N T R AH0 P R AH0 N ER1
+specific S P AH0 S IH1 F IH0 K
+particularly P ER0 T IH1 K Y AH0 L ER0 L IY0
+necessary N EH1 S AH0 S EH2 R IY0
+available AH0 V EY1 L AH0 B AH0 L
+area EH1 R IY0 AH0
+world W ER1 L D
+thought TH AO1 T
+bought B AO1 T
+caught K AO1 T
+though DH OW1
+word W ER1 D
+iron AY1 ER0 N
+debt D EH1 T
+doubt D AW1 T
+walk W AO1 K
+talk T AO1 K
+half HH AE1 F
+calm K AA1 M
+climb K L AY1 M
+answer AE1 N S ER0
+ocean OW1 SH AH0 N
+area EH1 R IY0 AH0
+don't D OW1 N T
+can't K AE1 N T
+won't W OW1 N T
+i'm AY1 M
+it's IH1 T S
+that's DH AE1 T S
+let's L EH1 T S
+we're W IH1 R
+you're Y UH1 R
+they're DH EH1 R
+i'll AY1 L
+i've AY1 V
+we'll W IY1 L
+we've W IY1 V
+isn't IH1 Z AH0 N T
+doesn't D AH1 Z AH0 N T
+didn't D IH1 D AH0 N T
+it IH1 T
+in IH1 N
+on AA1 N
+at AE1 T
+by B AY1
+as AE1 Z
+if IH1 F
+so S OW1
+up AH1 P
+its IH1 T S
+than DH AE1 N
+then DH EH1 N
+which W IH1 CH
+while W AY1 L
+each IY1 CH
+even IY1 V IH0 N
+over OW1 V ER0
+under AH1 N D ER0
+most M OW1 S T
+use Y UW1 Z
+used Y UW1 Z D
+together T AH0 G EH1 DH ER0`;
+
+const DICT = {};
+DICT_SRC.split('\n').forEach(l => { const p = l.trim().split(/\s+/); if (p.length > 1) DICT[p[0]] = p.slice(1); });
+
+const VOWELS = new Set(['AA','AE','AH','AO','AW','AY','EH','ER','EY','IH','IY','OW','OY','UH','UW']);
+const base = t => (t || '').replace(/\d/, '');
+const stressOf = t => { const m = (t || '').match(/\d/); return m ? +m[0] : null; };
+
+/* =========================================================
+   2. 철자 규칙 기반 발음 추정 (사전에 없는 단어용)
+   ========================================================= */
+const CONS = {b:'B',c:'K',d:'D',f:'F',g:'G',h:'HH',j:'JH',k:'K',l:'L',m:'M',n:'N',p:'P',q:'K',r:'R',s:'S',t:'T',v:'V',w:'W',x:'K S',y:'Y',z:'Z'};
+
+function rulesG2P(w) {
+  const n = w.length, out = [], silent = new Set();
+  const V = c => !!c && 'aeiou'.includes(c);
+  const C = c => !!c && /[a-z]/.test(c) && !V(c);
+  const put = s => s && s.split(' ').forEach(p => p && out.push(p));
+  const hasV = () => out.some(t => VOWELS.has(t));
+  let i = 0;
+  while (i < n) {
+    if (silent.has(i)) { i++; continue; }
+    const r = w.slice(i), c = w[i], p = w[i - 1] || '', nx = w[i + 1] || '';
+    const at = k => w[i + k] || '';
+    const end = k => i + k >= n;
+    let m;
+    if (i === 0 && /^(kn|gn)/.test(r)) m = ['N', 2];
+    else if (i === 0 && r.startsWith('wr')) m = ['R', 2];
+    else if (i === 0 && r.startsWith('ps')) m = ['S', 2];
+    else if (/^(tion|cian)/.test(r)) m = ['SH AH N', 4];
+    else if (r.startsWith('sion')) m = [(V(p) ? 'ZH' : 'SH') + ' AH N', 4];
+    else if (/^(tial|cial)/.test(r)) m = ['SH AH L', 4];
+    else if (r.startsWith('ture')) m = ['CH ER', 4];
+    else if (r.startsWith('sure') && i > 0) m = [(V(p) ? 'ZH' : 'SH') + ' ER', 4];
+    else if (r === 'ous') m = ['AH S', 3];
+    else if (r.startsWith('eigh')) m = ['EY', 4];
+    else if (/^(augh|ough)/.test(r)) m = ['AO', 4];
+    else if (r.startsWith('igh')) m = ['AY', 3];
+    else if (r.startsWith('tch')) m = ['CH', 3];
+    else if (r.startsWith('dge')) m = ['JH', 3];
+    else if (r === 'le' && i > 0 && C(p)) m = ['AH L', 2];
+    else if (r.startsWith('ear')) m = [C(at(3)) ? 'ER' : 'IH R', 3];
+    else if (r.startsWith('air')) m = ['EH R', 3];
+    else if (r === 'are' && i > 0) m = ['EH R', 3];
+    else if (r === 'ire') m = ['AY ER', 3];
+    else if (r === 'ore') m = ['AO R', 3];
+    else if (r === 'ure') m = ['UH R', 3];
+    else if (r.startsWith('ee')) m = ['IY', 2];
+    else if (r.startsWith('ead')) m = ['EH D', 3];
+    else if (r.startsWith('ea')) m = ['IY', 2];
+    else if (r.startsWith('ook')) m = ['UH K', 3];
+    else if (r.startsWith('oo')) m = ['UW', 2];
+    else if (r.startsWith('ou')) m = ['AW', 2];
+    else if (r.startsWith('ow')) m = [end(2) ? 'OW' : 'AW', 2];
+    else if (/^(oi|oy)/.test(r)) m = ['OY', 2];
+    else if (/^(ai|ay)/.test(r)) m = ['EY', 2];
+    else if (/^(au|aw)/.test(r)) m = ['AO', 2];
+    else if (r === 'ey') m = ['IY', 2];
+    else if (r.startsWith('ei')) m = ['IY', 2];
+    else if (r === 'ie') m = [n <= 4 ? 'AY' : 'IY', 2];
+    else if (r.startsWith('ie')) m = ['IY', 2];
+    else if (/^(ew|ue)/.test(r)) m = ['UW', 2];
+    else if (r.startsWith('oa')) m = ['OW', 2];
+    else if (r === 'oe') m = ['OW', 2];
+    else if (/^al[lk]/.test(r) && !V(at(3))) m = [r[2] === 'l' ? 'AO L' : 'AO K', 3];
+    else if (c === 'a' && p === 'w' && nx === 'r' && !V(at(2))) m = ['AO R', 2];
+    else if (/^[aeiou]r/.test(r) && !V(at(2)) && at(2) !== 'r' && at(2) !== 'y') m = [{a:'AA R',o:'AO R',e:'ER',i:'ER',u:'ER'}[c], 2];
+    else if (r.startsWith('ch')) m = ['CH', 2];
+    else if (r.startsWith('sh')) m = ['SH', 2];
+    else if (r.startsWith('ph')) m = ['F', 2];
+    else if (r.startsWith('wh')) m = ['W', 2];
+    else if (r.startsWith('ck')) m = ['K', 2];
+    else if (r.startsWith('th')) m = [i > 0 && r.startsWith('ther') ? 'DH' : 'TH', 2];
+    else if (r.startsWith('nk')) m = ['NG K', 2];
+    else if (r.startsWith('ng')) m = ['NG', 2];
+    else if (r.startsWith('qu')) m = ['K W', 2];
+    else if (r.startsWith('gh')) m = [i === 0 ? 'G' : '', 2];
+    else if (r === 'mb') m = ['M', 2];
+    else if (r === 'gn') m = ['N', 2];
+    else if (c === 'e' && end(1) && hasV()) m = ['', 1];
+    else if (V(c) && C(nx) && !'wxy'.includes(nx) && at(2) === 'e' && /^(|s|d|ly|ful|ment|ness)$/.test(w.slice(i + 3))) {
+      silent.add(i + 2);
+      m = [{a:'EY',e:'IY',i:'AY',o:'OW',u:'UW'}[c], 1];
+    }
+    else if (c === 'y') {
+      if (i === 0 || V(nx)) m = ['Y', 1];
+      else if (end(1)) m = [hasV() ? 'IY' : 'AY', 1];
+      else m = ['IH', 1];
+    }
+    else if (c === 'c') {
+      if (nx === 'c') m = [/[eiy]/.test(at(2)) ? 'K S' : 'K', 2];
+      else m = [/[eiy]/.test(nx) ? 'S' : 'K', 1];
+    }
+    else if (c === 'g') {
+      if (nx === 'g') m = ['G', 2];
+      else m = [(/[ey]/.test(nx) || (nx === 'i' && i > 0)) ? 'JH' : 'G', 1];
+    }
+    else if (c === 'x') m = [i === 0 ? 'Z' : 'K S', 1];
+    else if (c === 's') {
+      if (nx === 's') m = ['S', 2];
+      else m = [i > 0 && V(p) && (V(nx) || nx === 'y') ? 'Z' : 'S', 1];
+    }
+    else if (C(c) && c === nx) m = [CONS[c], 2];
+    else if (V(c)) {
+      if (end(1)) m = [{a:'AH',e:n <= 3 ? 'IY' : '',i:'IY',o:'OW',u:'UW'}[c], 1];
+      else if (c === 'a' && p === 'w') m = ['AA', 1];
+      else m = [{a:'AE',e:'EH',i:'IH',o:'AA',u:'AH'}[c], 1];
+    }
+    else m = [CONS[c] || '', 1];
+    put(m[0]); i += m[1];
+  }
+  return assignStress(out, w);
+}
+
+function assignStress(toks, w) {
+  const vi = [];
+  toks.forEach((t, i) => { if (VOWELS.has(t)) vi.push(i); });
+  if (!vi.length) return toks;
+  const V = vi.length;
+  let k = 0;
+  if (V > 1) {
+    if (/(ity|ical|ify|ology)$/.test(w)) k = V - 3;
+    else if (/(tion|sion|cian|tial|cial|ic|ious|ian)$/.test(w)) k = V - 2;
+    else if (/^(be|de|re|pre|ex)[^aeiouy]/.test(w)) k = 1;
+    k = Math.max(0, Math.min(k, V - 1));
+  }
+  const REDUCE = {AE:'AH',AA:'AH',AH:'AH',EH:'AH'};
+  return toks.map((t, i) => {
+    if (!VOWELS.has(t)) return t;
+    if (vi.indexOf(i) === k) return t + '1';
+    return (REDUCE[t] || t) + '0';
+  });
+}
+
+/* 어미(-s, -ed, -ing …)를 떼고 기본형을 찾아 발음을 붙임 */
+const last = t => base(t[t.length - 1]);
+const plural = t => { const b = last(t);
+  if (['S','Z','SH','ZH','CH','JH'].includes(b)) return [...t, 'IH0', 'Z'];
+  if (['P','T','K','F','TH'].includes(b)) return [...t, 'S'];
+  return [...t, 'Z']; };
+const past = t => { const b = last(t);
+  if (b === 'T' || b === 'D') return [...t, 'IH0', 'D'];
+  if (['P','K','F','S','SH','CH','TH'].includes(b)) return [...t, 'T'];
+  return [...t, 'D']; };
+const ing = t => [...t, 'IH0', 'NG'];
+
+function derive(w, get, rulesMode) {
+  if (w.length < 4) return null;
+  const tries = [];
+  const add = (b, f) => { if (b.length >= 2) tries.push([b, f]); };
+  if (/ies$/.test(w)) add(w.slice(0, -3) + 'y', t => [...t, 'Z']);
+  if (/(s|x|z|ch|sh)es$/.test(w)) add(w.slice(0, -2), t => [...t, 'IH0', 'Z']);
+  if (/s$/.test(w) && !/(ss|us|is)$/.test(w)) add(w.slice(0, -1), plural);
+  if (/ied$/.test(w)) add(w.slice(0, -3) + 'y', t => [...t, 'D']);
+  if (/ed$/.test(w)) {
+    if (rulesMode) add(w.slice(0, -1), past);
+    else {
+      add(w.slice(0, -2), past); add(w.slice(0, -1), past);
+      if (w.at(-3) === w.at(-4)) add(w.slice(0, -3), past);
+    }
+  }
+  if (/ing$/.test(w) && w.length >= 5) {
+    const b = w.slice(0, -3);
+    if (rulesMode) add(/[^aeiou][aeiou][^aeiouwxy]$/.test(b) && b.at(-1) !== b.at(-2) ? b + 'e' : b, ing);
+    else { add(b, ing); add(b + 'e', ing); if (b.at(-1) === b.at(-2)) add(b.slice(0, -1), ing); }
+  }
+  if (/ily$/.test(w)) add(w.slice(0, -3) + 'y', t => [...t.slice(0, -1), 'AH0', 'L', 'IY0']);
+  if (/ly$/.test(w)) add(w.slice(0, -2), t => last(t) === 'L' ? [...t, 'IY0'] : [...t, 'L', 'IY0']);
+  if (!rulesMode) {
+    const SUF = [['ness', ['N','AH0','S']], ['ment', ['M','AH0','N','T']], ['ful', ['F','AH0','L']],
+                 ['less', ['L','AH0','S']], ['est', ['AH0','S','T']], ['er', ['ER0']]];
+    SUF.forEach(([s, ph]) => { if (w.endsWith(s)) add(w.slice(0, -s.length), t => [...t, ...ph]); });
+  }
+  for (const [b, f] of tries) { const t = get(b); if (t) return f([...t]); }
+  return null;
+}
+
+function lookup(raw) {
+  const w = raw.toLowerCase().replace(/’/g, "'");
+  if (DICT[w]) return { toks: DICT[w], src: 'dict' };
+  const bare = w.replace(/'/g, '');
+  if (DICT[bare]) return { toks: DICT[bare], src: 'dict' };
+  const d = derive(bare, x => DICT[x], false);
+  if (d) return { toks: d, src: 'derived' };
+  const r = derive(bare, x => rulesG2P(x), true);
+  return { toks: r || rulesG2P(bare), src: 'rules' };
+}
+
+/* =========================================================
+   3. 음소 → 발음 기호(IPA) / 쉬운 읽기 (미국식·영국식)
+   ========================================================= */
+const C_IPA = {B:'b',CH:'tʃ',D:'d',DH:'ð',F:'f',G:'ɡ',HH:'h',JH:'dʒ',K:'k',L:'l',M:'m',N:'n',NG:'ŋ',P:'p',R:'r',S:'s',SH:'ʃ',T:'t',TH:'θ',V:'v',W:'w',Y:'j',Z:'z',ZH:'ʒ'};
+const C_RESP = {B:'b',CH:'ch',D:'d',DH:'dh',F:'f',G:'g',HH:'h',JH:'j',K:'k',L:'l',M:'m',N:'n',NG:'ng',P:'p',R:'r',S:'s',SH:'sh',T:'t',TH:'th',V:'v',W:'w',Y:'y',Z:'z',ZH:'zh'};
+const US_V = {AA:['ɑ','aa'],AE:['æ','a'],AO:['ɔ','aa'],AW:['aʊ','ow'],AY:['aɪ','ai'],EH:['ɛ','e'],EY:['eɪ','ay'],IH:['ɪ','i'],IY:['i','ee'],OW:['oʊ','oh'],OY:['ɔɪ','oy'],UH:['ʊ','u'],UW:['u','oo']};
+const GB_V = {AO:['ɔː','aw'],AW:['aʊ','ow'],AY:['aɪ','ai'],EH:['e','e'],EY:['eɪ','ay'],IH:['ɪ','i'],OW:['əʊ','oh'],OY:['ɔɪ','oy'],UH:['ʊ','u']};
+
+function usVowel(b, s, rc) {
+  if (rc) { const m = {AO:['ɔ','o'],EH:['ɛ','ai'],EY:['ɛ','ai'],IH:['ɪ','ee'],IY:['ɪ','ee'],UH:['ʊ','oo'],UW:['ʊ','oo'],AA:['ɑ','aa']}; if (m[b]) return m[b]; }
+  if (b === 'AH') return s > 0 ? ['ʌ','uh'] : ['ə','uh'];
+  if (b === 'ER') return s > 0 ? ['ɝ','ur'] : ['ɚ','ur'];
+  return US_V[b];
+}
+function bathVowel(t, i) {
+  const a = base(t[i + 1]), c = base(t[i + 2]);
+  if (a === 'F' || a === 'TH') return true;
+  if (a === 'S' && !VOWELS.has(c)) return true;
+  return a === 'N' && ['T','S','CH'].includes(c);
+}
+function gbVowel(b, s, rc, toks, i, lw) {
+  if (rc) { const m = {AA:['ɑː','aa'],AO:['ɔː','aw'],EH:['eə','air'],EY:['eə','air'],IH:['ɪə','eer'],IY:['ɪə','eer'],UH:['ʊə','oor'],UW:['ʊə','oor'],AY:['aɪə','ire'],AW:['aʊə','our']}; if (m[b]) return m[b]; }
+  switch (b) {
+    case 'AH': return s > 0 ? ['ʌ','uh'] : ['ə','uh'];
+    case 'ER': return s > 0 ? ['ɜː','ur'] : ['ə','uh'];
+    case 'AA': return (lw.includes('o') || base(toks[i - 1]) === 'W') ? ['ɒ','o'] : ['ɑː','aa'];
+    case 'AE': return s === 1 && bathVowel(toks, i) ? ['ɑː','aa'] : ['æ','a'];
+    case 'IY': return s === 0 ? ['i','ee'] : ['iː','ee'];
+    case 'UW': return s === 0 ? ['u','oo'] : ['uː','oo'];
+  }
+  return GB_V[b];
+}
+function renderTokens(toks, acc, word) {
+  const lw = word.toLowerCase(), gb = acc === 'en-GB';
+  return toks.map((t, i) => {
+    const b = base(t), s = stressOf(t), nb = base(toks[i + 1]), nnb = base(toks[i + 2]);
+    const isV = VOWELS.has(b);
+    let ipa, resp;
+    if (!isV) {
+      if (b === 'R' && gb && !VOWELS.has(nb)) { ipa = ''; resp = ''; }
+      else { ipa = C_IPA[b] || ''; resp = C_RESP[b] || ''; }
+    } else {
+      const rc = nb === 'R' && !VOWELS.has(nnb);
+      [ipa, resp] = (gb ? gbVowel(b, s, rc, toks, i, lw) : usVowel(b, s, rc)) || ['', ''];
+    }
+    return { b, s: s || 0, isV, ipa, resp };
+  });
+}
+
+const ONSETS = new Set(['P L','P R','B L','B R','T R','D R','K L','K R','G L','G R','F L','F R','TH R','SH R','S P','S T','S K','S M','S N','S L','S W','T W','K W','D W','S P R','S T R','S K R','S P L','S K W','P Y','B Y','F Y','K Y','M Y','HH Y','V Y','G Y']);
+const legalOnset = on => { if (!on) return true; const p = on.split(' '); return p.length === 1 ? p[0] !== 'NG' : ONSETS.has(on); };
+
+function syllabify(rt) {
+  const nuc = rt.map((t, i) => t.isV ? i : -1).filter(i => i >= 0);
+  if (!nuc.length) return [{ toks: rt, s: 0 }];
+  const cuts = [0];
+  for (let k = 1; k < nuc.length; k++) {
+    const a = nuc[k - 1] + 1, b = nuc[k];
+    let start = b;
+    for (let j = a; j <= b; j++) {
+      if (legalOnset(rt.slice(j, b).map(t => t.b).join(' '))) { start = j; break; }
+    }
+    cuts.push(start);
+  }
+  return cuts.map((c, k) => {
+    const toks = rt.slice(c, cuts[k + 1] ?? rt.length);
+    const v = toks.find(t => t.isV);
+    return { toks, s: v ? v.s : 0 };
+  });
+}
+
+/* 온라인 사전 IPA → 음소 (로컬 실행 시에만 사용됨) */
+const IPA_SEQ = [['tʃ','CH'],['dʒ','JH'],['eɪ','EY'],['aɪ','AY'],['ɔɪ','OY'],['aʊ','AW'],['oʊ','OW'],['əʊ','OW'],['ɪə','IH R'],['eə','EH R'],['ɛə','EH R'],['ʊə','UH R'],
+  ['ɑ','AA'],['ɒ','AA'],['ɔ','AO'],['i','IY'],['u','UW'],['ɝ','ER'],['ɜ','ER'],['ɚ','ER0'],['ə','AH0'],['ɐ','AH0'],['ᵻ','IH0'],['ʌ','AH'],['æ','AE'],['ɛ','EH'],['e','EH'],['ɪ','IH'],['ʊ','UH'],['o','OW'],['a','AA'],
+  ['θ','TH'],['ð','DH'],['ʃ','SH'],['ʒ','ZH'],['ŋ','NG'],['j','Y'],['ɹ','R'],['r','R'],['ɾ','T'],['ɫ','L'],['ɡ','G'],['g','G'],['ʍ','W'],
+  ['b','B'],['d','D'],['f','F'],['h','HH'],['k','K'],['l','L'],['m','M'],['n','N'],['p','P'],['s','S'],['t','T'],['v','V'],['w','W'],['z','Z']];
+function parseIPA(txt) {
+  const s = txt.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\([^)]*\)/g, '').replace(/[\/\[\]\s.ːˑ‿˞]/g, '');
+  const out = []; let pend = null, i = 0;
+  while (i < s.length) {
+    const ch = s[i];
+    if (ch === 'ˈ' || ch === "'") { pend = 1; i++; continue; }
+    if (ch === 'ˌ') { pend = 2; i++; continue; }
+    const hit = IPA_SEQ.find(([k]) => s.startsWith(k, i));
+    if (!hit) { i++; continue; }
+    i += hit[0].length;
+    hit[1].split(' ').forEach(t => {
+      const b = base(t);
+      if (b === 'R' && out.length && base(out[out.length - 1]) === 'ER') return;
+      if (VOWELS.has(b)) { const d = stressOf(t); out.push(b + (pend ?? d ?? 0)); pend = null; }
+      else out.push(t);
+    });
+  }
+  if (!out.some(t => stressOf(t) === 1)) { const k = out.findIndex(t => VOWELS.has(base(t))); if (k >= 0) out[k] = base(out[k]) + '1'; }
+  return out.some(t => VOWELS.has(base(t))) ? out : null;
+}
+
+/* =========================================================
+   4. 입 모양 일러스트
+   ========================================================= */
+const VIS = {
+  rest:     {ow:40,oh:9},
+  open:     {ow:44,oh:34,iw:34,ih:24,ty:1,teeth:.9},
+  mid:      {ow:40,oh:21,iw:30,ih:11,ty:.6,teeth:.6},
+  round:    {ow:24,oh:22,iw:12,ih:11,ty:.6},
+  roundOpen:{ow:28,oh:30,iw:17,ih:19,ty:.8,teeth:.4},
+  spread:   {ow:52,oh:17,iw:42,ih:7,ty:.4,teeth:1},
+  er:       {ow:30,oh:20,iw:18,ih:10,ty:-.6,teeth:.5},
+  closed:   {ow:42,oh:11},
+  fv:       {ow:44,oh:15,iw:34,ih:4,bite:1},
+  th:       {ow:44,oh:18,iw:34,ih:8,teeth:1,tout:1},
+  alveolar: {ow:42,oh:19,iw:32,ih:10,ty:-1,teeth:.9},
+  sibilant: {ow:48,oh:15,iw:38,ih:4,teeth:1},
+  post:     {ow:30,oh:21,iw:20,ih:10,ty:-.3,teeth:1},
+  velar:    {ow:40,oh:21,iw:30,ih:12,ty:.9,teeth:.7}
+};
+const ZERO = {ow:40,oh:9,iw:0,ih:0,ty:0,teeth:0,tout:0,bite:0};
+const VIS_OF = {AA:'open',AE:'open',AH:'open',AY:'open',AW:'open',AO:'roundOpen',OW:'round',UW:'round',UH:'round',OY:'round',W:'round',
+  IY:'spread',IH:'spread',EY:'spread',EH:'spread',Y:'spread',ER:'er',R:'er',M:'closed',B:'closed',P:'closed',F:'fv',V:'fv',TH:'th',DH:'th',
+  T:'alveolar',D:'alveolar',N:'alveolar',L:'alveolar',S:'sibilant',Z:'sibilant',SH:'post',ZH:'post',CH:'post',JH:'post',K:'velar',G:'velar',NG:'velar',HH:'velar'};
+const VIS_NAME = {rest:'쉬는 입',open:'크게 벌린 입',mid:'살짝 벌린 입',round:'동그랗게 모은 입',roundOpen:'둥글게 벌린 입',spread:'옆으로 당긴 입',er:'혀를 만 입',
+  closed:'다문 입술',fv:'윗니 + 아랫입술',th:'혀끝 내밀기',alveolar:'혀끝을 윗잇몸에',sibilant:'이를 모은 입',post:'입술 내밀기',velar:'혀 뒤쪽 올리기'};
+const PH_TIP = {
+  AA:"입을 크게 벌리고 턱을 내린 '아'", AE:"입을 옆·아래로 크게 벌린 '애'", AH:"짧고 힘을 뺀 '어'", AH0:"힘을 완전히 뺀 약한 '어' (슈와)",
+  AO:"입술을 둥글게 하고 벌린 '오어'", AW:"'아'에서 '우'로 미끄러지듯", AY:"'아'에서 '이'로 미끄러지듯", EH:"짧은 '에'",
+  ER:"혀끝을 뒤로 말아 올린 '어r'", EY:"'에'에서 '이'로", IH:"짧고 느슨한 '이'", IY:"입꼬리를 당긴 긴 '이'",
+  OW:"'오'에서 '우'로 입술을 모으며", OY:"'오'에서 '이'로", UH:"입술을 살짝 모은 짧은 '우'", UW:"입술을 쭉 내민 긴 '우'",
+  B:"두 입술을 붙였다 떼며 성대를 울리기", P:"두 입술을 붙였다 강하게 터뜨리기", M:"입술을 닫고 콧소리", F:"윗니를 아랫입술에 대고 바람 내기",
+  V:"F 모양에서 성대를 울리기", TH:"혀끝을 이 사이로 살짝 내밀고 바람", DH:"TH 모양에서 성대를 울리기", T:"혀끝을 윗잇몸에 댔다 터뜨리기",
+  D:"T 모양 + 성대 울림", N:"혀끝을 윗잇몸에 대고 콧소리", L:"혀끝을 윗잇몸에 꾹 붙이기", R:"혀끝을 말아 올리되 입천장에 닿지 않게",
+  S:"윗니·아랫니를 모으고 '스'", Z:"S 모양 + 성대 울림 (벌 소리)", SH:"입술을 앞으로 내밀고 '쉬'", ZH:"SH 모양 + 성대 울림",
+  CH:"입술을 내밀고 '츄'", JH:"입술을 내밀고 '쥬'", K:"혀 뒤쪽을 올려 막았다 터뜨리기", G:"K 모양 + 성대 울림",
+  NG:"혀 뒤쪽을 올리고 콧소리 (받침 ㅇ)", HH:"입을 편하게 열고 숨을 '흐'", W:"입술을 동그랗게 모았다 풀기", Y:"'이' 위치에서 빠르게 다음 모음으로"
+};
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mEl = id => document.getElementById(id);
+let cur = { ...ZERO }, target = { ...ZERO }, raf = 0;
+function drawMouth() {
+  const cx = 100, cy = 78, c = cur;
+  const set = (el, o) => { for (const k in o) el.setAttribute(k, o[k]); };
+  set(mEl('lipO'), { rx: c.ow, ry: c.oh });
+  set(mEl('inner'), { rx: c.iw, ry: c.ih });
+  set(mEl('clipE'), { rx: c.iw, ry: c.ih });
+  set(mEl('teethT'), { x: cx - c.iw, y: cy - c.ih - 1, width: 2 * c.iw, height: Math.min(9, c.ih + 1), opacity: c.teeth });
+  set(mEl('teethB'), { x: cx - c.iw, y: cy + c.ih - 6, width: 2 * c.iw, height: 7, opacity: c.teeth * .7 });
+  set(mEl('tongue'), { cy: cy + c.ih * (.5 + .35 * c.ty), rx: c.iw * .72, ry: Math.max(3, c.ih * .55) * (c.ih > .5 ? 1 : 0) });
+  set(mEl('tout'), { rx: 15 * c.tout, ry: 5.5 * c.tout, cy: cy + 1 });
+  set(mEl('bite'), { y: cy + c.ih - 2, opacity: c.bite });
+  const lo = Math.max(0, 1 - c.ih / 3);
+  set(mEl('lipLine'), { d: `M${cx - c.ow * .82} ${cy} Q${cx} ${cy + 3} ${cx + c.ow * .82} ${cy}`, opacity: lo });
+  set(mEl('shine'), { cy: cy + c.oh * .62, rx: c.ow * .35 });
+}
+function stepMouth() {
+  let done = true;
+  for (const k in target) {
+    const d = target[k] - cur[k];
+    cur[k] += d * .38;
+    if (Math.abs(d) > .05) done = false; else cur[k] = target[k];
+  }
+  drawMouth();
+  raf = done ? 0 : requestAnimationFrame(stepMouth);
+}
+function setVis(name) {
+  target = { ...ZERO, ...VIS[name] };
+  if (reduceMotion) { cur = { ...target }; drawMouth(); return; }
+  if (!raf) raf = requestAnimationFrame(stepMouth);
+}
+function visFor(t) { return t.b === 'AH' && t.s === 0 ? 'mid' : (VIS_OF[t.b] || 'rest'); }
+
+/* =========================================================
+   5. 상태 · 렌더링
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+const SRC_LABEL = { dict:'내장 사전', derived:'사전 + 어미', online:'온라인 사전', rules:'추정' };
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const state = { raw: '', words: [], R: [], focus: 0, chipK: -1, score: null };
+const accent = () => $('#accent').value;
+const onlineCache = {};
+
+function analyze(raw) {
+  const words = [], re = /[A-Za-z]+(?:['’][A-Za-z]+)*/g; let m;
+  while ((m = re.exec(raw))) {
+    const r = lookup(m[0]);
+    const key = m[0].toLowerCase();
+    words.push({ text: m[0], start: m.index, end: m.index + m[0].length, toks: r.toks, src: r.src, online: onlineCache[key] || null });
+  }
+  return words;
+}
+function wordTokens(w) {
+  if (w.online) {
+    const t = accent() === 'en-GB' ? (w.online.uk || w.online.us) : (w.online.us || w.online.uk);
+    if (t) return { toks: t, src: 'online' };
+  }
+  return { toks: w.toks, src: w.src };
+}
+function renderWord(w, sentence) {
+  const { toks, src } = wordTokens(w);
+  const rt = renderTokens(toks, accent(), w.text);
+  const syl = syllabify(rt), n = syl.length;
+  const ipa = syl.map(s => (n > 1 && s.s === 1 ? 'ˈ' : n > 1 && s.s === 2 ? 'ˌ' : '') + s.toks.map(t => t.ipa).join('')).join('');
+  const parts = syl.map(s => { const r = s.toks.map(t => t.resp).join(''); return s.s === 1 && (n > 1 || !sentence) ? `<b>${r}</b>` : r; }).filter(Boolean);
+  return { rt, ipa, resp: parts.join('<span class="dot">·</span>'), src };
+}
+
+function render() {
+  const ws = state.words, multi = ws.length > 1;
+  state.R = ws.map(w => ({ ...renderWord(w, multi), table: renderWord(w, false).resp }));
+  const R = state.R;
+  $('#queryText').textContent = state.raw.trim();
+  const resp = $('#resp');
+  if (!ws.length) {
+    resp.className = 'resp md';
+    resp.innerHTML = '<span style="color:var(--muted)">영어를 입력하세요</span>';
+    $('#ipa').textContent = '';
+    $('#src').textContent = '';
+    $('#wordCount').textContent = '';
+    $('#tbody').innerHTML = '<tr><td colspan="7" class="empty">단어나 문장을 입력하면 단어마다 쉬운 읽기와 발음 기호가 여기에 나와요.</td></tr>';
+    renderChips();
+    return;
+  }
+  resp.className = 'resp ' + (!multi ? 'lg' : state.raw.length > 40 ? 'sm' : 'md');
+  resp.innerHTML = R.map((r, i) => `<span class="w" data-i="${i}">${r.resp}</span>`).join(' ');
+  $('#ipa').innerHTML = '/' + R.map((r, i) => `<span class="w" data-i="${i}">${r.ipa}</span>`).join(' ') + '/';
+  const guessed = R.filter(r => r.src === 'rules').length;
+  $('#src').textContent = guessed
+    ? `${guessed}개 단어는 철자 규칙으로 추정했어요`
+    : (R.some(r => r.src === 'online') ? '온라인 사전 기준' : '내장 사전 기준');
+  $('#wordCount').textContent = `${ws.length}단어`;
+  $('#tbody').innerHTML = ws.map((w, i) => `<tr data-i="${i}">
+      <td class="num">${i + 1}</td>
+      <td class="q-word">${esc(w.text)}</td>
+      <td class="t-resp">${R[i].table}</td>
+      <td class="t-ipa">/${R[i].ipa}/</td>
+      <td><span class="pill ${R[i].src}">${SRC_LABEL[R[i].src]}</span></td>
+      <td class="t-score ${scoreFor(i)?.status || ''}">${scoreFor(i) ? scoreFor(i).score : '—'}</td>
+      <td><button class="mini" data-play="${i}" aria-label="${esc(w.text)} 듣기" title="이 단어만 듣기">${SPK}</button></td>
+    </tr>`).join('');
+  if (state.focus >= ws.length) state.focus = 0;
+  markFocus();
+  renderChips(true);
+}
+
+function markFocus() {
+  document.querySelectorAll('.w').forEach(el => el.classList.toggle('focus', state.words.length > 1 && +el.dataset.i === state.focus));
+  document.querySelectorAll('#tbody tr[data-i]').forEach(el => el.classList.toggle('focus', +el.dataset.i === state.focus));
+}
+function renderChips(pickStress) {
+  const r = state.R[state.focus], w = state.words[state.focus];
+  $('#chipWord').textContent = w ? w.text : '';
+  if (!r) { $('#chips').innerHTML = ''; showPhoneme(-1); return; }
+  $('#chips').innerHTML = r.rt.map((t, k) => t.ipa
+    ? `<button class="chip" data-k="${k}" title="${VIS_NAME[visFor(t)]}"><span class="sym">${t.ipa}</span><span class="rs">${t.resp}</span></button>` : '').join('');
+  if (pickStress) {
+    let k = r.rt.findIndex(t => t.isV && t.s === 1);
+    if (k < 0) k = r.rt.findIndex(t => t.isV);
+    showPhoneme(k);
+  }
+}
+function showPhoneme(k) {
+  const r = state.R[state.focus];
+  const t = r && r.rt[k];
+  state.chipK = t ? k : -1;
+  document.querySelectorAll('.chip').forEach(el => el.classList.toggle('on', +el.dataset.k === k));
+  if (!t) { setVis('rest'); $('#capSym').textContent = ''; $('#capName').textContent = VIS_NAME.rest; $('#capTip').textContent = '발음 기호를 누르면 입 모양이 바뀌어요.'; return; }
+  const v = visFor(t);
+  setVis(v);
+  $('#capSym').textContent = t.ipa;
+  $('#capName').textContent = VIS_NAME[v];
+  $('#capTip').textContent = (t.b === 'AH' && t.s === 0 ? PH_TIP.AH0 : PH_TIP[t.b]) || '';
+}
+function setFocus(i) {
+  if (i === state.focus && state.chipK >= 0) return;
+  state.focus = i; markFocus(); renderChips(true);
+}
+
+/* =========================================================
+   6. 음성 재생 (Web Speech API)
+   ========================================================= */
+const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
+let timers = [];
+const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+
+function pickVoice() {
+  if (!synth) return null;
+  const want = accent().toLowerCase();
+  const vs = synth.getVoices().filter(v => (v.lang || '').replace('_', '-').toLowerCase() === want);
+  return vs.find(v => /google/i.test(v.name)) || vs.find(v => /natural|premium|enhanced/i.test(v.name)) || vs.find(v => v.localService) || vs[0] || null;
+}
+/* 로컬 서버(server.py)가 있으면 고품질 음성·채점을 쓰고, 없으면 브라우저 음성으로 동작 */
+const server = { info: null, tts: false, asr: false };
+async function checkServer() {
+  try {
+    const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 1500);
+    const res = await fetch('/api/health', { signal: ctrl.signal, cache: 'no-store' });
+    const j = res.ok ? await res.json() : null;
+    if (!j || !('tts' in j)) throw new Error('no server');
+    server.info = j; server.tts = j.tts === 'ready'; server.asr = j.asr === 'ready';
+    if (j.tts === 'loading' || j.asr === 'loading') setTimeout(checkServer, 2000);
+  } catch (e) { server.info = null; server.tts = server.asr = false; }
+  updateVoiceInfo(); updateRecUI();
+}
+
+function updateVoiceInfo() {
+  const el = $('#voiceInfo'), rate = $('#slow').checked ? '0.5배속' : '1.0배속';
+  if (server.tts) {
+    el.innerHTML = `<span class="engine hq">고품질 음성</span>Kokoro · ${server.info.voices[accent()] || ''} · ${rate}`;
+    $('#speakBtn').disabled = false; return;
+  }
+  const note = server.info && server.info.tts === 'loading' ? ' (고품질 음성 모델을 불러오는 중)' : '';
+  if (!synth) { el.textContent = '이 브라우저는 음성 재생(Web Speech API)을 지원하지 않아요. Chrome, Edge, Safari에서 열어 주세요.'; $('#speakBtn').disabled = true; return; }
+  const v = pickVoice();
+  el.innerHTML = `<span class="engine">브라우저 음성</span>` + esc(v ? `${v.name} · ${rate}` : `${accent()} 전용 음성이 없어 기본 영어 음성으로 재생 · ${rate}`) + note;
+}
+function setSpeaking(on) { $('#speakBtn').classList.toggle('on', on); $('#speakBtn').setAttribute('aria-label', on ? '재생 멈추기' : '발음 듣기'); }
+function clearSpeakHL() { document.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking')); }
+
+function onWord(idx, msPer) {
+  clearSpeakHL();
+  document.querySelectorAll(`.w[data-i="${idx}"], #tbody tr[data-i="${idx}"]`).forEach(el => el.classList.add('speaking'));
+  if (state.focus !== idx) { state.focus = idx; markFocus(); renderChips(false); }
+  const r = state.R[idx]; if (!r) return;
+  let n = 0;
+  r.rt.forEach((t, k) => { if (!t.ipa) return; later(() => showPhoneme(k), n * msPer); n++; });
+}
+function finishSpeaking() {
+  setSpeaking(false); clearTimers(); clearSpeakHL();
+  later(() => { const k = state.R[state.focus]?.rt.findIndex(t => t.isV && t.s === 1); showPhoneme(k ?? -1); }, 250);
+}
+
+let audio = null, playToken = 0;
+const audioCache = new Map();
+const isPlaying = () => (audio && !audio.paused) || (synth && (synth.speaking || synth.pending));
+function stopAll() {
+  playToken++;
+  if (synth) synth.cancel();
+  if (audio) { audio.onpause = audio.onended = null; audio.pause(); audio = null; }
+  $('#speakBtn').classList.remove('busy');
+  setSpeaking(false); clearTimers(); clearSpeakHL();
+}
+
+/* 서버 음성: 타임스탬프가 없으므로 단어별 소리 개수 비율로 재생 위치 → 단어를 추정 */
+async function serverSpeak(text, ranges) {
+  stopAll();
+  const token = playToken, slow = $('#slow').checked, key = `${accent()}|${slow}|${text}`;
+  let url = audioCache.get(key);
+  if (!url) {
+    $('#speakBtn').classList.add('busy');
+    try {
+      const res = await fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, accent: accent(), slow }) });
+      if (!res.ok) throw new Error('tts');
+      url = URL.createObjectURL(await res.blob());
+      audioCache.set(key, url);
+    } catch (e) {
+      $('#speakBtn').classList.remove('busy');
+      if (token === playToken) browserSpeak(text, ranges);
+      return;
+    }
+    $('#speakBtn').classList.remove('busy');
+  }
+  if (token !== playToken) return;
+  const a = audio = new Audio(url);
+  const weights = ranges.map(rg => (state.R[rg.idx]?.rt.filter(t => t.ipa).length || 3) + 1.5);
+  const total = weights.reduce((x, y) => x + y, 0);
+  let lastK = -1;
+  const tick = () => {
+    if (audio !== a || a.paused) return;
+    const d = a.duration;
+    if (d > 0) {
+      const frac = a.currentTime / (d * 0.95);
+      let acc = 0, k = 0;
+      for (; k < weights.length - 1; k++) { acc += weights[k] / total; if (frac < acc) break; }
+      if (k !== lastK) { lastK = k; onWord(ranges[k].idx, d * 1000 / total); }
+    }
+    requestAnimationFrame(tick);
+  };
+  a.onplay = () => { setSpeaking(true); tick(); };
+  a.onended = a.onpause = () => { if (audio === a) { audio = null; finishSpeaking(); } };
+  a.play().catch(() => { if (audio === a) { audio = null; finishSpeaking(); } });
+}
+
+function browserSpeak(text, ranges) {
+  if (!synth || !text.trim()) return;
+  stopAll();
+  const rate = $('#slow').checked ? 0.5 : 1;
+  const msPer = 80 / rate;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = accent(); u.rate = rate; u.pitch = 1;
+  const v = pickVoice(); if (v) u.voice = v;
+  let gotBoundary = false;
+  u.onstart = () => {
+    setSpeaking(true);
+    later(() => {
+      if (gotBoundary) return;
+      let t = 0;
+      ranges.forEach(rg => {
+        const n = state.R[rg.idx] ? state.R[rg.idx].rt.filter(x => x.ipa).length : 3;
+        later(() => onWord(rg.idx, msPer), t);
+        t += n * msPer + 90 / rate;
+      });
+    }, 250);
+  };
+  u.onboundary = e => {
+    if (e.name && e.name !== 'word') return;
+    gotBoundary = true;
+    const rg = ranges.find(r => e.charIndex < r.end);
+    if (rg) { clearTimers(); onWord(rg.idx, msPer); }
+  };
+  u.onend = u.onerror = () => { if (window.__utter === u) finishSpeaking(); };
+  window.__utter = u;
+  setTimeout(() => synth.speak(u), 30);
+}
+const speak = (text, ranges) => text.trim() && (server.tts ? serverSpeak(text, ranges) : browserSpeak(text, ranges));
+function speakAll() {
+  if (isPlaying()) { stopAll(); finishSpeaking(); return; }
+  speak(state.raw, state.words.map((w, i) => ({ start: w.start, end: w.end, idx: i })));
+}
+function speakWord(i) {
+  const w = state.words[i]; if (!w) return;
+  speak(w.text, [{ start: 0, end: w.text.length, idx: i }]);
+}
+
+/* ---------- 녹음 · 채점 ---------- */
+const STATUS_TXT = { good: '잘했어요', fair: '조금 애매해요', poor: '알아듣기 어려워요', wrong: '다른 단어로 들렸어요', missed: '빠뜨렸어요' };
+let rec = null, recTimer = 0;
+const setRecStatus = t => { $('#recStatus').textContent = t; };
+const scoreFor = i => (state.score && state.score.raw === state.raw ? state.score.words[i] : null);
+
+function updateRecUI() {
+  const btn = $('#recBtn');
+  if (rec && rec.state === 'recording') return;
+  if (!server.info) { btn.disabled = true; setRecStatus('녹음 채점은 로컬 서버가 필요해요. 터미널에서 server.py를 실행한 뒤 http://localhost:8000 으로 열어 주세요.'); return; }
+  if (!navigator.mediaDevices || !window.MediaRecorder) { btn.disabled = true; setRecStatus('이 브라우저에서는 녹음을 쓸 수 없어요. Chrome이나 Safari 최신 버전으로 http://localhost:8000 을 열어 주세요.'); return; }
+  if (server.info.asr === 'loading') { btn.disabled = true; setRecStatus('발음 인식 모델을 불러오는 중이에요. 처음 실행할 때는 모델을 내려받느라 1~2분 걸려요.'); return; }
+  if (server.info.asr === 'error') { btn.disabled = true; setRecStatus('인식 모델을 불러오지 못했어요: ' + (server.info.asr_error || '')); return; }
+  btn.disabled = false;
+  if (!state.score) setRecStatus('버튼을 누르고 위 문장을 소리 내 읽은 뒤, 버튼을 한 번 더 눌러 채점하세요.');
+}
+function setRecUI(on) {
+  $('#recBtn').classList.toggle('on', on);
+  $('#recLabel').textContent = on ? '녹음 멈추고 채점' : '녹음 시작';
+}
+async function toggleRec() {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  if (!state.words.length) { setRecStatus('먼저 읽을 영어 문장을 입력하세요.'); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); }
+  catch (e) { setRecStatus('마이크를 쓸 수 없어요. 주소창 왼쪽의 사이트 설정에서 마이크를 허용해 주세요.'); return; }
+  stopAll();
+  const mime = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+  const r = rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+  const chunks = [], target = state.raw, t0 = Date.now();
+  r.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  r.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    clearInterval(recTimer); setRecUI(false);
+    upload(new Blob(chunks, { type: r.mimeType || 'audio/webm' }), target);
+  };
+  r.start(); setRecUI(true);
+  recTimer = setInterval(() => {
+    const s = (Date.now() - t0) / 1000;
+    setRecStatus(`녹음 중 ${s.toFixed(1)}초 · 다 읽었으면 버튼을 한 번 더 누르세요 (최대 30초)`);
+    if (s >= 30 && r.state === 'recording') r.stop();
+  }, 100);
+}
+async function upload(blob, target) {
+  setRecStatus('채점하는 중…');
+  $('#recBtn').disabled = true;
+  const fd = new FormData();
+  fd.append('audio', blob, 'rec.' + (blob.type.includes('mp4') ? 'mp4' : 'webm'));
+  fd.append('text', target);
+  try {
+    const res = await fetch('/api/score', { method: 'POST', body: fd });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(j.detail || '채점에 실패했어요. 서버 터미널의 오류 메시지를 확인해 주세요.');
+    state.score = { raw: target, ...j };
+    render(); showScore();
+    const weak = j.words.filter(w => w.status !== 'good').length;
+    setRecStatus(weak ? `빨간색·주황색 단어 ${weak}개를 눌러 올바른 발음을 듣고 다시 녹음해 보세요.` : '모든 단어를 또렷하게 발음했어요. 느림을 끄고 속도를 올려 보세요.');
+  } catch (e) { setRecStatus(e.message === 'Failed to fetch' ? '서버에 연결하지 못했어요. server.py가 실행 중인지 확인해 주세요.' : e.message); }
+  finally { $('#recBtn').disabled = false; }
+}
+function showScore() {
+  const sc = state.score, el = $('#result');
+  if (!sc || sc.raw !== state.raw) { el.hidden = true; el.innerHTML = ''; return; }
+  const color = v => v >= 80 ? 'var(--ok)' : v >= 60 ? 'var(--warn)' : 'var(--bad)';
+  const C = 2 * Math.PI * 46;
+  const bars = [['정확도', sc.accuracy], ['완성도', sc.completeness], ['유창성', sc.fluency]]
+    .map(([k, v]) => `<div class="bar"><span>${k}</span><span class="tr"><i style="width:${v}%;background:${color(v)}"></i></span><span class="n">${v}</span></div>`).join('');
+  const words = sc.words.map((w, i) => {
+    const tip = STATUS_TXT[w.status] + (w.status === 'wrong' && w.heard ? ` — '${w.heard}'(으)로 들림` : '');
+    return `<button class="sw ${w.status}" data-sw="${i}" title="${esc(tip)}">${esc(w.word)}<small>${w.status === 'missed' ? '빠뜨림' : w.score}</small></button>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="ring"><svg viewBox="0 0 108 108"><circle class="bg" cx="54" cy="54" r="46" fill="none" stroke-width="9"/><circle class="fg" cx="54" cy="54" r="46" fill="none" stroke-width="9" stroke-linecap="round" stroke="${color(sc.overall)}" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - sc.overall / 100)}"/></svg><div class="val"><div><b>${sc.overall}</b><span>종합 점수</span></div></div></div>
+    <div class="bars">${bars}<div class="heard">말하기 속도 <b>${sc.wpm || '-'}</b> wpm · 긴 멈춤 <b>${sc.pauses}</b>회</div></div>
+    <div class="swords">${words}</div>
+    <div class="heard">들린 문장: <b>${esc(sc.transcript || '(알아들은 말이 없어요)')}</b>${sc.extra.length ? ` · 원문에 없는 말: ${esc(sc.extra.join(', '))}` : ''}</div>`;
+  el.hidden = false;
+}
+
+/* 온라인 사전(dictionaryapi.dev) — 로컬 브라우저에서 열었을 때만 동작, Artifact에선 조용히 건너뜀 */
+async function tryOnline(word) {
+  const key = word.toLowerCase();
+  if (key in onlineCache || /'/.test(key)) return;
+  onlineCache[key] = null;
+  const ctrl = new AbortController(), tm = setTimeout(() => ctrl.abort(), 3000);
+  try {
+    const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(key), { signal: ctrl.signal });
+    if (!res.ok) return;
+    const data = await res.json();
+    const ph = data.flatMap(e => e.phonetics || []).filter(p => p.text);
+    if (!ph.length) return;
+    const us = ph.find(p => /-us\./.test(p.audio || '')), uk = ph.find(p => /-uk\./.test(p.audio || ''));
+    const res2 = { us: parseIPA((us || ph[0]).text), uk: uk ? parseIPA(uk.text) : null };
+    if (!res2.us && !res2.uk) return;
+    onlineCache[key] = res2;
+    state.words.forEach(w => { if (w.text.toLowerCase() === key) w.online = res2; });
+    render();
+  } catch (e) { /* 네트워크 차단 시 내장 사전 사용 */ }
+  finally { clearTimeout(tm); }
+}
+
+/* =========================================================
+   7. 입력 · 목록 · 이벤트
+   ========================================================= */
+const SAMPLES = [
+  'We launched this project to change the world.',
+  'Ladies and gentlemen, thank you for being here today.',
+  'I believe that education is the key to opportunity.',
+  'Together, we can build a better future.',
+  'pronunciation',
+  'comfortable'
+];
+function load(raw, opts = {}) {
+  state.raw = raw;
+  state.words = analyze(raw);
+  const lens = state.words.map(w => w.text.length);
+  state.focus = lens.length ? lens.indexOf(Math.max(...lens)) : 0;
+  state.chipK = -1;
+  render(); showScore(); updateRecUI();
+  if (state.words.length === 1) tryOnline(state.words[0].text);
+  if (opts.speak) speakAll();
+  if (opts.save) addRecent(raw.trim());
+}
+function addRecent(t) {
+  if (!t) return;
+  const list = [t, ...store.get('pc.recent', []).filter(x => x !== t)].slice(0, 8);
+  store.set('pc.recent', list); renderLists();
+}
+function renderLists() {
+  const btn = t => `<button class="item" data-text="${esc(t)}">${esc(t)}</button>`;
+  $('#samples').innerHTML = SAMPLES.map(btn).join('');
+  const rec = store.get('pc.recent', []);
+  $('#recent').innerHTML = rec.length ? rec.map(btn).join('') : '<span class="none">검색하거나 재생한 문장이 여기에 쌓여요.</span>';
+}
+function saveSettings() { store.set('pc.settings', { accent: accent(), slow: $('#slow').checked, memo: $('#memo').checked }); }
+
+let debounce = 0;
+$('#q').addEventListener('input', e => { clearTimeout(debounce); debounce = setTimeout(() => load(e.target.value), 220); });
+$('#searchForm').addEventListener('submit', e => { e.preventDefault(); clearTimeout(debounce); load($('#q').value, { speak: true, save: true }); });
+$('#clearBtn').addEventListener('click', () => { $('#q').value = ''; load(''); $('#q').focus(); });
+$('#speakBtn').addEventListener('click', () => { speakAll(); addRecent(state.raw.trim()); });
+$('#recBtn').addEventListener('click', toggleRec);
+$('#slow').addEventListener('change', () => { updateVoiceInfo(); saveSettings(); });
+$('#accent').addEventListener('change', () => { render(); updateVoiceInfo(); saveSettings(); });
+$('#memo').addEventListener('change', e => { document.body.classList.toggle('memo', e.target.checked); saveSettings(); });
+$('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) showPhoneme(+c.dataset.k); });
+document.addEventListener('click', e => {
+  const play = e.target.closest('[data-play]');
+  if (play) { e.stopPropagation(); const i = +play.dataset.play; setFocus(i); speakWord(i); return; }
+  const row = e.target.closest('#tbody tr[data-i]');
+  if (row) { setFocus(+row.dataset.i); return; }
+  const w = e.target.closest('.w');
+  if (w) { const i = +w.dataset.i; setFocus(i); speakWord(i); return; }
+  const sw = e.target.closest('[data-sw]');
+  if (sw) { const i = +sw.dataset.sw; setFocus(i); speakWord(i); return; }
+  const item = e.target.closest('.item');
+  if (item) { $('#q').value = item.dataset.text; load(item.dataset.text, { speak: true, save: true }); }
+});
+
+(function init() {
+  const s = store.get('pc.settings', {});
+  if (s.accent) $('#accent').value = s.accent;
+  $('#slow').checked = !!s.slow;
+  $('#memo').checked = !!s.memo;
+  document.body.classList.toggle('memo', !!s.memo);
+  renderLists();
+  drawMouth();
+  const first = SAMPLES[0];
+  $('#q').value = first;
+  load(first);
+  updateVoiceInfo();
+  checkServer();
+  if (synth) synth.addEventListener ? synth.addEventListener('voiceschanged', updateVoiceInfo) : (synth.onvoiceschanged = updateVoiceInfo);
+})();
+</script>
+
+</body>
+</html>
